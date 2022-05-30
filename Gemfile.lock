@@ -35,6 +35,7 @@ GEM
       rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
+    rake (13.0.6)
     regexp_parser (2.4.0)
     ruby2_keywords (0.0.5)
     sequel (5.56.0)
@@ -64,6 +65,7 @@ DEPENDENCIES
   minitest
   puma
   rack-test
+  rake
   sequel
   sinatra
   sinatra-contrib

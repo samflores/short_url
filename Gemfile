@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 gem 'hashids'
 gem 'puma'
+gem 'rake'
 gem 'sequel'
 gem 'sinatra'
 gem 'sinatra-contrib'
