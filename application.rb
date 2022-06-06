@@ -1,30 +1,27 @@
-environment = ENV.fetch('RACK_ENV', 'development')
+require_relative './config/environment'
 
 require 'sinatra'
-require 'sinatra/reloader' unless environment == 'production'
-require 'sequel'
-require 'hashids'
+require 'sinatra/reloader' unless ENVIRONMENT == 'production'
 
-DB = Sequel.connect(
-  adapter: :sqlite,
-  database: "db/#{environment}.db"
-)
+require_relative './services/create_short_url_service'
+require_relative './services/short_url_by_hash_service'
 
-class Application < Sinatra::Application
-  get '/' do
-    erb :new
-  end
+get '/' do
+  erb :new
+end
 
-  post '/create' do
-    url = params['target_url']
-    @page_id = DB[:pages].insert(target_url: url)
-    @page_id = Hashids.new('salt').encode(@page_id)
-    erb :created
-  end
+post '/create' do
+  url = params['target_url']
 
-  get '/:id' do
-    id = params['id']
-    @page = DB[:pages].where(id: id).first
-    redirect @page[:target_url]
-  end
+  @page_id = CreateShortUrlService.new(url).create
+
+  erb :created
+end
+
+get '/:id' do
+  id = params['id']
+
+  @page = ShortUrlByHashService.new(id).find
+
+  redirect @page
 end

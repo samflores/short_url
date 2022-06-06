@@ -10,7 +10,7 @@ require 'database_cleaner-sequel'
 
 require_relative '../application'
 
-Capybara.app = Application
+Capybara.app = Sinatra::Application
 DatabaseCleaner[:sequel].strategy = :transaction
 
 class Minitest::Spec
