@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 require_relative './integration_helper'
 require_relative '../config/db_connection'
 
 describe 'URL Shortener' do
   it 'creates a new page' do
-
     hasher = MiniTest::Mock.new
     def hasher.encode(_)
       'AB'
@@ -20,7 +21,7 @@ describe 'URL Shortener' do
 
   it 'redirects to the target url' do
     page_id = DB[:pages].insert(target_url: 'http://test.com')
-    
+
     hasher = MiniTest::Mock.new
     def hasher.decode(_)
       page_id

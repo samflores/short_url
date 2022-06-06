@@ -1,0 +1,7 @@
+# See https://docs.rubocop.org/rubocop/configuration
+
+AllCops:
+  NewCops: enable
+
+Style/Documentation:
+  Enabled: false

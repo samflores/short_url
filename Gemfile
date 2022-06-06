@@ -14,3 +14,5 @@ gem 'capybara'
 gem 'database_cleaner-sequel'
 gem 'minitest'
 gem 'rack-test'
+
+gem 'rubocop'

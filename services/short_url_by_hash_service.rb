@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../config/db_connection'
 require 'hashids'
 
@@ -8,7 +10,7 @@ class ShortUrlByHashService
 
   def find
     page = DB[:pages].where(id: @page_hash).first
-    
+
     page[:target_url]
   end
 end
