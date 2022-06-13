@@ -1,16 +1,26 @@
 # frozen_string_literal: true
 
-require_relative '../config/db_connection'
+require_relative '../models/page'
 require 'hashids'
 
 class ShortUrlByHashService
+  class PageNotFoundError < StandardError; end
+
   def initialize(page_hash)
     @page_hash = page_hash
   end
 
   def find
-    page = DB[:pages].where(id: @page_hash).first
+    page = Page[page_id]
 
-    page[:target_url]
+    raise PageNotFoundError if page.nil?
+
+    page.target_url
+  end
+
+  private
+
+  def page_id
+    Hashids.new('salt').decode(@page_hash).first
   end
 end

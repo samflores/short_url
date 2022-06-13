@@ -4,33 +4,59 @@ require_relative './integration_helper'
 require_relative '../config/db_connection'
 
 describe 'URL Shortener' do
-  it 'creates a new page' do
-    hasher = MiniTest::Mock.new
-    def hasher.encode(_)
-      'AB'
+  describe 'page creation' do
+    describe 'with valid URL' do
+      it 'creates a new page' do
+        hasher = MiniTest::Mock.new
+        hasher.expect(:encode, 'AB', [Integer])
+
+        Hashids.stub(:new, hasher) do
+          visit '/'
+          fill_in 'target_url', with: 'http://google.com'
+          click_button 'Encurtar'
+        end
+
+        page.must_have_content 'http://localhost:4567/AB'
+      end
     end
 
-    Hashids.stub(:new, hasher) do
-      visit '/'
-      fill_in 'target_url', with: 'http://google.com'
-      click_button 'Encurtar'
+    describe 'with blank URL' do
+      it 'shows an error message' do
+        visit '/'
+        fill_in 'target_url', with: ''
+        click_button 'Encurtar'
+        page.must_have_content 'target_url is not present'
+      end
     end
-
-    page.must_have_content 'http://localhost:4567/AB'
   end
 
-  it 'redirects to the target url' do
-    page_id = DB[:pages].insert(target_url: 'http://test.com')
+  describe 'page loading' do
+    describe 'when the page is found' do
+      it 'redirects to the target url' do
+        model = Page.create(target_url: 'http://other-test.com')
 
-    hasher = MiniTest::Mock.new
-    def hasher.decode(_)
-      page_id
+        hasher = MiniTest::Mock.new
+        hasher.expect(:decode, [model.id], ['AB'])
+
+        Hashids.stub(:new, hasher) do
+          visit '/AB'
+        end
+
+        page.must_have_current_path 'http://other-test.com'
+      end
     end
 
-    Hashids.stub(:new, hasher) do
-      visit "/#{page_id}"
-    end
+    describe 'when there is not a page associated with the link' do
+      it 'shows an error page' do
+        hasher = MiniTest::Mock.new
+        hasher.expect(:decode, [42], ['XY'])
 
-    page.must_have_current_path 'http://test.com'
+        Hashids.stub(:new, hasher) do
+          visit '/XY'
+        end
+
+        page.must_have_content 'Unable to locate link'
+      end
+    end
   end
 end

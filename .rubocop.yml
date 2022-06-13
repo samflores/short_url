@@ -1,7 +1,17 @@
 # See https://docs.rubocop.org/rubocop/configuration
 
+require:
+  - rubocop-minitest
+  - rubocop-rake
+  - rubocop-sequel
+
 AllCops:
   NewCops: enable
 
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'
+
 Style/Documentation:
   Enabled: false
+
