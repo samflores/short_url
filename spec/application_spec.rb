@@ -44,6 +44,24 @@ describe 'URL Shortener' do
 
         page.must_have_current_path 'http://other-test.com'
       end
+
+      it 'creates table entry' do
+        model = Page.create(target_url: 'http://other-test.com')
+
+        hasher = MiniTest::Mock.new
+        hasher.expect(:decode, [model.id], ['AB'])
+
+        Hashids.stub(:new, hasher) do
+          #lambda { visit '/AB' }.must_change(PageVisit.count)
+          #_(lambda { visit '/AB' }).must_change(PageVisit.count)
+          prev_count = PageVisit.count
+          visit '/AB'
+          _(PageVisit.count).must_equal(prev_count + 1)
+        end
+
+        #<banco?>.<entrada_possui_registro_correto> 
+
+      end
     end
 
     describe 'when there is not a page associated with the link' do
