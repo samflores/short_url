@@ -45,22 +45,18 @@ describe 'URL Shortener' do
         page.must_have_current_path 'http://other-test.com'
       end
 
-      it 'creates table entry' do
-        model = Page.create(target_url: 'http://other-test.com')
+      it 'registers that the page was visited' do
+        page = Page.create(target_url: 'http://other-test.com')
+        page_id = page.id
 
         hasher = MiniTest::Mock.new
-        hasher.expect(:decode, [model.id], ['AB'])
+        hasher.expect(:decode, [page.id], ['AB'])
 
         Hashids.stub(:new, hasher) do
-          #lambda { visit '/AB' }.must_change(PageVisit.count)
-          #_(lambda { visit '/AB' }).must_change(PageVisit.count)
-          prev_count = PageVisit.count
+          prev_count = PageVisit.where(page_id: page_id).count
           visit '/AB'
-          _(PageVisit.count).must_equal(prev_count + 1)
+          _(PageVisit.where(page_id: page_id).count).must_equal(prev_count + 1)
         end
-
-        #<banco?>.<entrada_possui_registro_correto> 
-
       end
     end
 

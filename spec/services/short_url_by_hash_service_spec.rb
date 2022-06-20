@@ -13,7 +13,7 @@ describe ShortUrlByHashService do
     Hashids.stub(:new, hasher) do
       result = ShortUrlByHashService.new('AB').find
 
-      _(result).must_equal 'http://test.com'
+      _(result.target_url).must_equal 'http://test.com'
     end
   end
 end
