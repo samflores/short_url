@@ -1,3 +1,5 @@
+require_relative '../models/page'
+
 class TrackVisitService
   def initialize(page)
     @page = page
