@@ -15,7 +15,7 @@ class ShortUrlByHashService
 
     raise PageNotFoundError if page.nil?
 
-    page.target_url
+    page
   end
 
   private

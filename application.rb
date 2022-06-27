@@ -5,9 +5,12 @@ require_relative './config/environment'
 require 'sinatra'
 require 'sinatra/flash'
 require 'sinatra/reloader' unless ENVIRONMENT == 'production'
+require 'date'
 
 require_relative './services/create_short_url_service'
 require_relative './services/short_url_by_hash_service'
+require_relative './models/page_visit'
+require_relative './services/track_visit_service'
 
 configure do
   enable :sessions
@@ -38,7 +41,9 @@ get '/:id' do
 
   @page = ShortUrlByHashService.new(id).find
 
-  redirect @page
+  TrackVisitService.new(@page).track
+
+  redirect @page.target_url
 rescue ShortUrlByHashService::PageNotFoundError
   flash[:error_title] = 'Unable to locate link'
   redirect '/'

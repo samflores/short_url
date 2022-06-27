@@ -44,6 +44,20 @@ describe 'URL Shortener' do
 
         page.must_have_current_path 'http://other-test.com'
       end
+
+      it 'registers that the page was visited' do
+        page = Page.create(target_url: 'http://other-test.com')
+        page_id = page.id
+
+        hasher = MiniTest::Mock.new
+        hasher.expect(:decode, [page.id], ['AB'])
+
+        Hashids.stub(:new, hasher) do
+          prev_count = PageVisit.where(page_id: page_id).count
+          visit '/AB'
+          _(PageVisit.where(page_id: page_id).count).must_equal(prev_count + 1)
+        end
+      end
     end
 
     describe 'when there is not a page associated with the link' do
