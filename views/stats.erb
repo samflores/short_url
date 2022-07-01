@@ -1,0 +1,9 @@
+<p>URL: <%= @page_hash %></p>
+<p>Target: <%= @stats[:target_url] %></p>
+<p><%= @visits_message %></p>
+
+<ul>
+<% @stats[:recent_visits].each do |timestamp| %>
+  <li><%= timestamp %></li>
+<% end %>
+</ul>
